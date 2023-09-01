@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Image 표출</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<style type="text/css">
+	.ol-zoom {
+		top : .5em;
+	}
+</style>
+<script type="text/javascript">
+	var map = null;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">Image 표출</h2>
+	<section class="mainView">
+		<div id="map" class="map"></div>
+	</section>
+	<div>
+		<button id="setImageLayer">이미지 레이어 생성</button>
+		<button id="removeImageLayer">이미지 레이어 제거</button>
+	</div>
+	<section class="mainSource">
+<pre class="line-numbers">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Image 표출&lt;/title&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;style type="text/css"&gt;
+	.ol-zoom {
+		top : .5em;
+	}
+&lt;/style&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;Image 표출&lt;/h2&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="map" class="map"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+	&lt;div&gt;
+		&lt;button id="setImageLayer"&gt;이미지 레이어 생성&lt;/button&gt;
+		&lt;button id="removeImageLayer"&gt;이미지 레이어 제거&lt;/button&gt;
+	&lt;/div&gt;
+	&lt;script type="text/javascript"&gt;
+	function onClick(id, fnCallback) {
+		document.getElementById(id).addEventListener('click', fnCallback);
+	}
+	
+	onClick('setImageLayer', function(){
+		var url = "http://125.61.15.141:8080/data/api/weatherImage/radarImage/KMA?fileName=RDR_CMP_201802222320.png";
+		var extent = [121.5568231, 30.7637945, 132.5214940, 40.5955843];
+		
+		map.setImageLayer('sampleImageLayer', url, extent, null, "EPSG:4326", 0.5, 0);
+	});
+	onClick('removeImageLayer', function(){
+		map.removeImageLayer('sampleImageLayer');
+	});	
+	&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	function onClick(id, fnCallback) {
+		document.getElementById(id).addEventListener('click', fnCallback);
+	}
+	
+	onClick('setImageLayer', function(){
+		var url = "http://125.61.15.141:8080/data/api/weatherImage/radarImage/KMA?fileName=RDR_CMP_201802222320.png";
+		var extent = [121.5568231, 30.7637945, 132.5214940, 40.5955843];
+		
+		map.setImageLayer('sampleImageLayer', url, extent, null, "EPSG:4326", 0.5, 0);
+	});
+	onClick('removeImageLayer', function(){
+		map.removeImageLayer('sampleImageLayer');
+	});
+	
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

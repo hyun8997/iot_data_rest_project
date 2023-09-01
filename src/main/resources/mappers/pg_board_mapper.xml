@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">  <!-- 이거 정해줘야 정상 동작 함 -->
+	
+	<insert id="insertData" parameterType="java.util.HashMap">
+		INSERT INTO temp.ti_jbt_iot_hr (
+			humidity, temperature, waterlevel,velocity, tm
+		) VALUES (
+					 #{humidity}, #{temperature}, #{waterlevel},#{velocity}, now()
+				 )
+	</insert>
+
+	<insert id="insertWlData" parameterType="java.util.HashMap">
+		INSERT INTO temp.ti_jbt_iot_wl_hr (
+			YMDHM, WLOBSCD, WL
+		) VALUES (
+			 #{ymdhm}, #{wlobscd}, #{wl}
+		 )
+		ON CONFLICT (YMDHM, WLOBSCD) DO UPDATE
+		SET
+			WL              = EXCLUDED.WL,
+		LAST_UPDT_PNTTM = NOW()
+	</insert>
+	<insert id="insertFrData" parameterType="java.util.HashMap">
+		INSERT INTO temp.ti_jbt_iot_fr_hr (
+			YMDHM, FROBSCD, FR
+		) VALUES (
+			 #{ymdhm}, #{frobscd}, #{fr}
+		 )
+		ON CONFLICT (YMDHM, FROBSCD) DO UPDATE
+		SET
+			FR              = EXCLUDED.FR,
+		LAST_UPDT_PNTTM = NOW()
+	</insert>
+	<insert id="insertThData" parameterType="java.util.HashMap">
+		INSERT INTO temp.ti_jbt_iot_th_hr (
+			YMDHM, THOBSCD, TP, HM
+		) VALUES (
+			 #{ymdhm}, #{thobscd}, #{tp},#{hm}
+		 )
+		ON CONFLICT (YMDHM, THOBSCD) DO UPDATE
+		SET
+			tp              = EXCLUDED.tp,
+			hm              = EXCLUDED.hm,
+		LAST_UPDT_PNTTM = NOW()
+	</insert>
+
+
+
+
+	<select id="selectData" resultType="java.lang.Double">
+		select humidity from temp.ti_jbt_iot_hr limit 1
+	</select>
+
+</mapper>

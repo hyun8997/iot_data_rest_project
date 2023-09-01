@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+
+ 
+ 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+ 	<!-- /WEB-INF/spring/security-*.xml 로 해야 인식 잘함 -->
+<!-- 	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/spring/root-context.xml 
+			/WEB-INF/spring/security-*.xml 
+		</param-value>
+	</context-param> -->
+	
+	<!-- 스프링 시큐리티 필터 추가(DelegatingFilterProxy) -->
+<!-- 	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+ 
+  -->
+ 
+ 
+ 
+ 
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
+	 
+	<!-- MultipartFilter -->
+	<!--<filter>
+		<filter-name>MultipartFilter</filter-name>
+		<filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>MultipartFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	 -->
+	 
+	 
+	<!-- 한글깨짐 방지 --> 
+    <!-- filter와 filter-mapping을 만들어 준다. -->
+    <filter> 
+        <!-- filter안에는 filter-name, filter-class, init-param을 추가해 준다.
+              filter-name은 원하는대로 지정해도됨 -->
+        <filter-name>encodingFilter</filter-name> 
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param> 
+            <!-- encoidng값을 UTF-8로 만들어 준다. -->
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<!-- error page -->
+<!-- 	<error-page>
+		<error-code>404</error-code>
+		<location>/code404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/code400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/code500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/code403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/code405.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>415</error-code>
+		<location>/code415.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/code500.jsp</location>
+	</error-page> -->
+
+
+</web-app>

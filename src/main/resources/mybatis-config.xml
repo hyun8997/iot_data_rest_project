@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <configuration>
+  	
+  	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+  	
+  	
+  	
+  	<typeAliases>
+<!--  		<package name="com.enjoybt.epdp.vo"/> &lt;!&ndash; 여기 위치한 Dto 알아서 넣어줌 &ndash;&gt;
+  		<package name="com.enjoybt.epdp.security.vo"/> &lt;!&ndash; 여기 위치한 Dto 알아서 넣어줌 &ndash;&gt;-->
+  	</typeAliases>
+  	
+  	
+  	
+  	<!--
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="org.postgresql.Driver" />
+                <property name="url" value="jdbc:postgresql://localhost:5432/spring" />
+                <property name="username" value="postgres" />
+                <property name="password" value="postgres" />
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="org/mybatis/example/BlogMapper.xml" />
+    </mappers>
+    -->
+  	
+  	
+  </configuration>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JBMap 조작하기</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="http://map.vworld.kr/js/apis.do?type=Base&apiKey=83C937E8-5485-3FE9-997A-6C2216D633CE"></script>
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<script type="text/javascript">
+	var map = null;
+	window.onload = function() {
+		var mapOption = {
+				mapDiv : "masterMap",
+				minZoom : 1,
+				maxZoom : 14,
+				zoom : 8,
+				isLongZoomControl : false,
+				isWorldView : true,
+				isScaleLine : true,
+				extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+				isGeoDesic : true,
+				center : [126.87760185189359, 37.527253858137236],
+				showBaseLayer : "BASE",
+				baseLayers : {
+					"BASE" : {
+						minZoom : 7,
+						maxZoom : 18,
+						zoom : 14,
+						layer : [
+						    new ol.layer.Tile({
+								preload : 4,
+								source : new ol.custom.source.Vworld({type : "base"}),
+								visible : false
+							})
+						]
+					}
+				,
+					"HYBRID" : {
+						minZoom : 7,
+						maxZoom : 18,
+						zoom : 14,
+						layer : [
+							new ol.layer.Tile({
+								name : "HYBRID_1",
+								source : new ol.custom.source.Vworld({type : "satellite"}),
+								visible : false
+							})
+							,
+							new ol.layer.Tile({
+								name : "HYBRID_2",
+								source : new ol.custom.source.Vworld({type : "hybrid", opaque : false}),
+								visible : false
+							})
+						]
+					}
+				},
+				isRotate : true
+		}
+		
+		map = new JBMap(mapOption);
+		
+		event();
+		mapEvent();
+	}
+	
+	function event() {
+		document.getElementById("baseChange").onclick = function() {
+			map.changeBaseLayer("BASE");
+		};
+		
+		document.getElementById("hybridChange").onclick = function() {
+			map.changeBaseLayer("HYBRID");
+		};
+		
+		document.getElementById("zoomIn").onclick = function() {
+			map.zoomIn();
+		};
+		
+		document.getElementById("zoomOut").onclick = function() {
+			map.zoomOut();
+		};
+		
+		document.getElementById("lengthCheck").onclick = function() {
+			map.setMeasureControl("NONE");
+			map.setMeasureControl("LENGTH");
+		};
+		
+		document.getElementById("areaCheck").onclick = function() {
+			map.setMeasureControl("NONE");
+			map.setMeasureControl("AREA");
+		};
+		
+		document.getElementById("measureOut").onclick = function() {
+			map.setMeasureControl("NONE");
+		};
+		
+		document.getElementById("moveCenter").onclick = function() {
+			var lon = document.getElementById("centerLon").value;
+			var lat = document.getElementById("centerLat").value;
+
+			if(lon == "" || lat == "") return;
+			lon = parseFloat(lon);
+			lat = parseFloat(lat);
+			map.setCenter(lon, lat);
+		};
+		
+		document.getElementById("moveExtent").onclick = function() {
+			var minx = document.getElementById("minX").value;
+			var miny = document.getElementById("minY").value;
+			var maxx = document.getElementById("maxX").value;
+			var maxy = document.getElementById("maxY").value;
+
+			if(minx == "" || miny == "" || maxx == "" || maxy == "") return;
+			minx = parseFloat(minx);
+			miny = parseFloat(miny);
+			maxx = parseFloat(maxx);
+			maxy = parseFloat(maxy);
+			map.setExtent(minx, miny, maxx, maxy);
+		};
+	}
+	
+	function mapEvent() {
+		map.setEvent("move", "CENTER_POINT", function(lonlat){
+			document.getElementById("centerLon").value = lonlat[0];
+			document.getElementById("centerLat").value = lonlat[1];
+			
+			var extent = map.getExtent("extent", true);
+			document.getElementById("minX").value = extent[0];
+			document.getElementById("minY").value = extent[1];
+			document.getElementById("maxX").value = extent[2];
+			document.getElementById("maxY").value = extent[3];
+		});
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">지도 조작하기</h2>
+	<span style="padding-left: 15px; color: #FF1100; font-weight: bold;">※ http://localhost:8080에서만 확인 가능</span>
+	<section class="mainView">
+		<div id="masterMap" class="map"></div>
+	</section>
+	<div>
+		<button id="baseChange">일반지도</button>
+		<button id="hybridChange">위성지도</button>
+		&nbsp;/&nbsp;
+		<button id="zoomIn">확대</button>
+		<button id="zoomOut">축소</button>
+		&nbsp;/&nbsp;
+		<button id="lengthCheck">거리재기</button>
+		<button id="areaCheck">면적재기</button>
+		<button id="measureOut">거리&면적재기 종료</button>
+		<br/>
+		lon : <input type="text" id="centerLon" />
+		lat : <input type="text" id="centerLat" />
+		<button id="moveCenter">이동</button>
+		<br/>
+		minX : <input type="text" id="minX" />
+		minY : <input type="text" id="minY" />
+		maxX : <input type="text" id="maxX" />
+		maxY : <input type="text" id="maxY" />
+		<button id="moveExtent">이동</button>
+	</div>
+	<section class="mainSource">
+<pre class="line-numbers">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;JBMap 조작하기&lt;/title&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="http://map.vworld.kr/js/apis.do?type=Base&apiKey=83C937E8-5485-3FE9-997A-6C2216D633CE"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	window.onload = function() {
+		var mapOption = {
+				mapDiv : "masterMap",
+				minZoom : 1,
+				maxZoom : 14,
+				zoom : 8,
+				isLongZoomControl : false,
+				isWorldView : true,
+				isScaleLine : true,
+				extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+				isGeoDesic : true,
+				center : [126.87760185189359, 37.527253858137236],
+				showBaseLayer : "BASE",
+				baseLayers : {
+					"BASE" : {
+						minZoom : 7,
+						maxZoom : 18,
+						zoom : 14,
+						layer : [
+						    new ol.layer.Tile({
+								preload : 4,
+								source : new ol.custom.source.Vworld({type : "base"}),
+								visible : false
+							})
+						]
+					}
+				,
+					"HYBRID" : {
+						minZoom : 7,
+						maxZoom : 18,
+						zoom : 14,
+						layer : [
+							new ol.layer.Tile({
+								name : "HYBRID_1",
+								source : new ol.custom.source.Vworld({type : "satellite"}),
+								visible : false
+							})
+							,
+							new ol.layer.Tile({
+								name : "HYBRID_2",
+								source : new ol.custom.source.Vworld({type : "hybrid", opaque : false}),
+								visible : false
+							})
+						]
+					}
+				},
+				isRotate : true
+		}
+		
+		map = new JBMap(mapOption);
+		
+		event();
+		mapEvent();
+	}
+	
+	function event() {
+		document.getElementById("baseChange").onclick = function() {
+			map.changeBaseLayer("BASE");
+		};
+		
+		document.getElementById("hybridChange").onclick = function() {
+			map.changeBaseLayer("HYBRID");
+		};
+		
+		document.getElementById("zoomIn").onclick = function() {
+			map.zoomIn();
+		};
+		
+		document.getElementById("zoomOut").onclick = function() {
+			map.zoomOut();
+		};
+		
+		document.getElementById("lengthCheck").onclick = function() {
+			map.setMeasureControl("NONE");
+			map.setMeasureControl("LENGTH");
+		};
+		
+		document.getElementById("areaCheck").onclick = function() {
+			map.setMeasureControl("NONE");
+			map.setMeasureControl("AREA");
+		};
+		
+		document.getElementById("measureOut").onclick = function() {
+			map.setMeasureControl("NONE");
+		};
+		
+		document.getElementById("moveCenter").onclick = function() {
+			var lon = document.getElementById("centerLon").value;
+			var lat = document.getElementById("centerLat").value;
+
+			if(lon == "" || lat == "") return;
+			lon = parseFloat(lon);
+			lat = parseFloat(lat);
+			map.setCenter(lon, lat);
+		};
+		
+		document.getElementById("moveExtent").onclick = function() {
+			var minx = document.getElementById("minX").value;
+			var miny = document.getElementById("minY").value;
+			var maxx = document.getElementById("maxX").value;
+			var maxy = document.getElementById("maxY").value;
+
+			if(minx == "" || miny == "" || maxx == "" || maxy == "") return;
+			minx = parseFloat(minx);
+			miny = parseFloat(miny);
+			maxx = parseFloat(maxx);
+			maxy = parseFloat(maxy);
+			map.setExtent(minx, miny, maxx, maxy);
+		};
+	}
+	
+	function mapEvent() {
+		map.setEvent("move", "CENTER_POINT", function(lonlat){
+			document.getElementById("centerLon").value = lonlat[0];
+			document.getElementById("centerLat").value = lonlat[1];
+			
+			var extent = map.getExtent("extent", true);
+			document.getElementById("minX").value = extent[0];
+			document.getElementById("minY").value = extent[1];
+			document.getElementById("maxX").value = extent[2];
+			document.getElementById("maxY").value = extent[3];
+		});
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;지도 조작하기&lt;/h2&gt;
+	&lt;span style="padding-left: 15px; color: #FF1100; font-weight: bold;"&gt;※ http://localhost:8080에서만 확인 가능&lt;/span&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="masterMap" class="map"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+	&lt;div&gt;
+		&lt;button id="baseChange"&gt;일반지도&lt;/button&gt;
+		&lt;button id="hybridChange"&gt;위성지도&lt;/button&gt;
+		&nbsp;/&nbsp;
+		&lt;button id="zoomIn"&gt;확대&lt;/button&gt;
+		&lt;button id="zoomOut"&gt;축소&lt;/button&gt;
+		&nbsp;/&nbsp;
+		&lt;button id="lengthCheck"&gt;거리재기&lt;/button&gt;
+		&lt;button id="areaCheck"&gt;면적재기&lt;/button&gt;
+		&lt;button id="measureOut"&gt;거리&면적재기 종료&lt;/button&gt;
+		&lt;br/&gt;
+		lon : &lt;input type="text" id="centerLon" /&gt;
+		lat : &lt;input type="text" id="centerLat" /&gt;
+		&lt;button id="moveCenter"&gt;이동&lt;/button&gt;
+		&lt;br/&gt;
+		minX : &lt;input type="text" id="minX" /&gt;
+		minY : &lt;input type="text" id="minY" /&gt;
+		maxX : &lt;input type="text" id="maxX" /&gt;
+		maxY : &lt;input type="text" id="maxY" /&gt;
+		&lt;button id="moveExtent"&gt;이동&lt;/button&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

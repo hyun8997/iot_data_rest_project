@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WMS 표출</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<script type="text/javascript">
+	var map = null;
+	window.onload = function() {
+		map = new JBMap({
+			mapDiv : "masterMap",
+			minZoom : 7,
+			maxZoom : 18,
+			zoom : 7,
+			isLongZoomControl : true,
+			isWorldView : true,
+			extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+			isScaleLine : true,
+			isGeoDesic : true,
+//			resolutions : [2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25],
+			center : [127.7528832672847, 36.23307548960749],
+			showBaseLayer : "BASE",
+			baseLayers : {
+				"BASE" : {
+					minZoom : 7,
+					maxZoom : 18,
+					zoom : 14,
+					layer : [
+					    new ol.layer.Tile({
+							preload : 4,
+							source : new ol.source.OSM(),
+							visible : false
+						})
+					]
+				}
+			},
+			projection : "EPSG:3857",
+			displayProjection : "EPSG:4326",
+			isRotate : true
+		});
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">WMS 표출</h2>
+	<section class="mainView">
+		<div id="masterMap" class="map"></div>
+	</section>
+	<div>
+		<button id="setWmsLayer">WMS 레이어 생성</button>
+		<button id="removeWmsLayer">WMS 레이어 제거</button>
+	</div>
+	<section class="mainSource">
+<pre class="line-numbers" escape="true">
+<code class="language-markup">
+	&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;WMS 표출&lt;/title&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	window.onload = function() {
+		map = new JBMap({
+			mapDiv : "masterMap",
+			minZoom : 7,
+			maxZoom : 18,
+			zoom : 7,
+			isLongZoomControl : true,
+			isWorldView : true,
+			extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+			isScaleLine : true,
+			isGeoDesic : true,
+//			resolutions : [2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25],
+			center : [127.7528832672847, 36.23307548960749],
+			showBaseLayer : "BASE",
+			baseLayers : {
+				"BASE" : {
+					minZoom : 7,
+					maxZoom : 18,
+					zoom : 14,
+					layer : [
+					    new ol.layer.Tile({
+							preload : 4,
+							source : new ol.source.OSM(),
+							visible : false
+						})
+					]
+				}
+			},
+			projection : "EPSG:3857",
+			displayProjection : "EPSG:4326",
+			isRotate : true
+		});
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;WMS 표출&lt;/h2&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="masterMap" class="map"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+	&lt;div&gt;
+		&lt;button id="setWmsLayer"&gt;WMS 레이어 생성&lt;/button&gt;
+		&lt;button id="removeWmsLayer"&gt;WMS 레이어 제거&lt;/button&gt;
+	&lt;/div&gt;
+	&lt;script type="text/javascript"&gt;
+
+	function onClick(id, fnCallback) {
+		document.getElementById(id).addEventListener('click', fnCallback);
+	}
+	
+	onClick('setWmsLayer', function(){
+		var url = 'http://192.168.0.192:8000/WMS';
+		var params = {
+				REQUEST : 'GetMap',
+				SERVICE : 'WMS',
+				LAYERS : 'gsds:bjd_sgg',
+				BBOX : '118.55139160156249,32.439403630101324,134.4486083984375,40.358339282078816'
+		};
+		map.setWmsLayer('sampleWmsLayer', url, params, null, 0, false, 0.5);
+	});
+	onClick('removeWmsLayer', function(){
+		map.removeWmsLayer('sampleWmsLayer');
+	});
+	
+	&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+
+	function onClick(id, fnCallback) {
+		document.getElementById(id).addEventListener('click', fnCallback);
+	}
+	
+	onClick('setWmsLayer', function(){
+		var url = 'http://192.168.0.192:8000/WMS';
+		var params = {
+				REQUEST : 'GetMap',
+				SERVICE : 'WMS',
+				LAYERS : 'gsds:hjd_sido',
+				CSS_BODY : '*{stroke:#ff0000}',
+				BBOX : '118.55139160156249,32.439403630101324,134.4486083984375,40.358339282078816'
+		};
+		map.setWmsLayer('sampleWmsLayer', url, params, null, 0, false, 0.5);
+	});
+	onClick('removeWmsLayer', function(){
+		map.removeWmsLayer('sampleWmsLayer');
+	});
+	
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

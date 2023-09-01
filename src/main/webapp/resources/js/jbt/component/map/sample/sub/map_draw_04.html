@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>도형 로드하기</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<style type="text/css">
+	.ol-zoom {
+		top : .5em;
+	}
+	
+	SECTION.mainView .mapBtnArea .mapBtnGroup {
+	    top: 5.5em;
+	}
+</style>
+<script type="text/javascript">
+	var map = null;
+	var drawType = null;
+	var radius = null;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+		
+		document.getElementById("pointDraw").onclick = function() {
+			drawType = "point";
+			radius = null;
+			map.setDrawFeatureControl("point", null, true, drawEndFunction);
+		}
+
+		document.getElementById("lineDraw").onclick = function() {
+			drawType = "line";
+			radius = null;
+			map.setDrawFeatureControl("line", null, true, drawEndFunction);
+		}
+
+		document.getElementById("polygonDraw").onclick = function() {
+			drawType = "polygon";
+			radius = null;
+			map.setDrawFeatureControl("polygon", null, true, drawEndFunction);
+		}
+
+		document.getElementById("circleDraw").onclick = function() {
+			drawType = "circle";
+			radius = null;
+			map.setDrawFeatureControl("circle", null, true, drawEndFunction);
+		}
+
+		document.getElementById("radiusDraw").onclick = function() {
+			drawType = "circle";
+			radius = 10000;
+			map.setDrawFeatureControl("circle", null, true, drawEndFunction, null, 10000);
+		}
+
+		document.getElementById("noneDraw").onclick = function() {
+			map.setDrawFeatureControl("none");
+			document.getElementById("output").innerHTML = "";
+			drawType = null;
+			radius = null;
+		}
+
+		document.getElementById("loadDraw").onclick = function() {
+			var text = document.getElementById("output").value;
+			
+			try{
+				var data = JSON.parse(text);
+				
+				if(drawType != null) {
+					if(radius != null) {
+						map.setDrawFeatureControl(drawType, null, true, drawEndFunction, data, radius);
+					}else{
+						map.setDrawFeatureControl(drawType, null, true, drawEndFunction, data);
+					}
+				}else{
+					document.getElementById("pointDraw").click();
+					map.setDrawFeatureControl("point", null, true, drawEndFunction, data);
+				}
+				
+			}catch(e) {
+				
+			}
+		}
+	}
+	
+	function drawEndFunction(feature) {
+		console.log(feature);
+		var json = JSON.stringify(feature);
+		document.getElementById("output").innerHTML = json;
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">도형 로드하기</h2>
+	<span>&nbsp;
+		drawEndFunction으로 Output된 Feature 정보를 DrawControl을 사용할 시 넣으면 해당 Feature를 넣을 상태에서 실행할 수 있다. 이는 도형을 따로 DB 상에 저장/로드할 수 있는 기능 구축할 때 활용 가능하다. 
+	</span>
+	<section class="mainView">
+		<div id="map" class="map"></div>
+		<div class="mapBtnArea">
+			<div class="mapBtnGroup ol-control">
+				<button id="pointDraw" class="mapEditor" title="점그리기">점</button>
+				<button id="lineDraw" class="mapEditor" title="선그리기">선</button>
+				<button id="polygonDraw" class="mapEditor" title="면그리기">면</button>
+				<button id="circleDraw" class="mapEditor" title="원그리기">원</button>
+				<button id="radiusDraw" class="mapEditor" title="원그리기(거리지정)">R</button>
+				<button id="noneDraw" class="mapEditor" title="종료">E</button>
+				<button id="loadDraw" class="mapEditor" title="읽기">L</button>
+			</div>
+		</div>
+	</section>
+	<textarea id="output" style="width:100%; height:300px;"></textarea>
+	<section class="mainSource">
+<pre class="line-numbers">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;도형 로드하기&lt;/title&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;style type="text/css"&gt;
+	.ol-zoom {
+		top : .5em;
+	}
+	
+	SECTION.mainView .mapBtnArea .mapBtnGroup {
+	    top: 5.5em;
+	}
+&lt;/style&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	var drawType = null;
+	var radius = null;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+		
+		document.getElementById("pointDraw").onclick = function() {
+			drawType = "point";
+			radius = null;
+			map.setDrawFeatureControl("point", null, true, drawEndFunction);
+		}
+
+		document.getElementById("lineDraw").onclick = function() {
+			drawType = "line";
+			radius = null;
+			map.setDrawFeatureControl("line", null, true, drawEndFunction);
+		}
+
+		document.getElementById("polygonDraw").onclick = function() {
+			drawType = "polygon";
+			radius = null;
+			map.setDrawFeatureControl("polygon", null, true, drawEndFunction);
+		}
+
+		document.getElementById("circleDraw").onclick = function() {
+			drawType = "circle";
+			radius = null;
+			map.setDrawFeatureControl("circle", null, true, drawEndFunction);
+		}
+
+		document.getElementById("radiusDraw").onclick = function() {
+			drawType = "circle";
+			radius = 10000;
+			map.setDrawFeatureControl("circle", null, true, drawEndFunction, null, 10000);
+		}
+
+		document.getElementById("noneDraw").onclick = function() {
+			map.setDrawFeatureControl("none");
+			document.getElementById("output").innerHTML = "";
+			drawType = null;
+			radius = null;
+		}
+
+		document.getElementById("loadDraw").onclick = function() {
+			var text = document.getElementById("output").value;
+			
+			try{
+				var data = JSON.parse(text);
+				
+				if(drawType != null) {
+					if(radius != null) {
+						map.setDrawFeatureControl(drawType, null, true, drawEndFunction, data, radius);
+					}else{
+						map.setDrawFeatureControl(drawType, null, true, drawEndFunction, data);
+					}
+				}else{
+					document.getElementById("pointDraw").click();
+					map.setDrawFeatureControl("point", null, true, drawEndFunction, data);
+				}
+				
+			}catch(e) {
+				
+			}
+		}
+	}
+	
+	function drawEndFunction(feature) {
+		console.log(feature);
+		var json = JSON.stringify(feature);
+		document.getElementById("output").innerHTML = json;
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;도형 로드하기&lt;/h2&gt;
+	&lt;span&gt;&nbsp;
+		drawEndFunction으로 Output된 Feature 정보를 DrawControl을 사용할 시 넣으면 해당 Feature를 넣을 상태에서 실행할 수 있다. 이는 도형을 따로 DB 상에 저장/로드할 수 있는 기능 구축할 때 활용 가능하다. 
+	&lt;/span&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="map" class="map"&gt;&lt;/div&gt;
+		&lt;div class="mapBtnArea"&gt;
+			&lt;div class="mapBtnGroup ol-control"&gt;
+				&lt;button id="pointDraw" class="mapEditor" title="점그리기"&gt;점&lt;/button&gt;
+				&lt;button id="lineDraw" class="mapEditor" title="선그리기"&gt;선&lt;/button&gt;
+				&lt;button id="polygonDraw" class="mapEditor" title="면그리기"&gt;면&lt;/button&gt;
+				&lt;button id="circleDraw" class="mapEditor" title="원그리기"&gt;원&lt;/button&gt;
+				&lt;button id="radiusDraw" class="mapEditor" title="원그리기(거리지정)"&gt;R&lt;/button&gt;
+				&lt;button id="noneDraw" class="mapEditor" title="종료"&gt;E&lt;/button&gt;
+				&lt;button id="loadDraw" class="mapEditor" title="읽기"&gt;L&lt;/button&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/section&gt;
+	&lt;textarea id="output" style="width:100%; height:300px;"&gt;&lt;/textarea&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로드뷰 표출</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4ad681d4261b2a819c3a4c276e2d5011"></script>
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=rEkjmLvdXMpf5ECJk3dX&submodules=panorama,geocoder"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<style type="text/css">
+	.ol-zoom {
+		top : .5em;
+	}
+	
+	SECTION.mainView .mapBtnArea .mapBtnGroup {
+	    top: 5.5em;
+	}
+</style>
+<script type="text/javascript">
+	var map = null;
+	var nvrRoad = null;
+	var kkoRoad = null;
+	window.onload = function() {
+		map = new JBMap({
+			isRotate : true,
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+		
+
+		var roadViewStyle = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(147, 226, 230, 0.4)'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#274894',
+				width : 2
+			}),
+			image : new ol.style.Icon({
+				anchor : [20, 30],
+				anchorXUnits : 'pixels',
+				anchorYUnits : 'pixels',
+				src : "../../images/icon/roadview.png"
+			})
+		});
+		
+		nvrRoad = new RoadView({
+			map : map,
+			type : "Naver",
+			view : naverView,
+			move : naverMove,
+			error : naverError
+		});
+		map.setVectorLayer("NAVER_VIEW", null, null, roadViewStyle);
+		
+		kkoRoad = new RoadView({
+			map : map,
+			type : "Daum",
+			view : kakaoView,
+			move : kakaoMove,
+			error : kakaoError
+		});
+		map.setVectorLayer("KAKAO_VIEW", null, null, roadViewStyle);
+		
+		
+		document.getElementById("naverRoadView").onclick = function() {
+			var bool = this.className.indexOf("on") == -1;
+			
+			var daumBtn = document.getElementById("daumRoadView");
+			if(daumBtn.className.indexOf("on") != -1) {
+				daumBtn.click();
+			}
+			
+			if(bool) {
+				this.className = "mapEditor on";
+				setNaverRoadView();
+			}else{
+				this.className = "mapEditor";
+				naverTooltipClose();
+			}
+		};
+
+		document.getElementById("daumRoadView").onclick = function() {
+			var bool = this.className.indexOf("on") == -1;
+
+			var naverBtn = document.getElementById("naverRoadView");
+			if(naverBtn.className.indexOf("on") != -1) {
+				naverBtn.click();
+			}
+			
+			if(bool) {
+				this.className = "mapEditor on";
+				setKakaoRoadView();
+			}else{
+				this.className = "mapEditor";
+				kakaoTooltipClose();
+			}
+		};
+	}
+	
+	function setKakaoRoadView() {
+		var content = document.createElement("div");
+		content.style.width = "250px";
+		content.style.height = "300px";
+		
+		map.setDrawFeatureControl("point", null, true, function(feature) {
+			var lonlat = feature[0].center;
+			map.setDrawFeatureControl("NONE");
+			kkoRoad.showRoadView(lonlat[0], lonlat[1], content);
+			var f = map.createFeature(feature[0].geom, null, null, true);
+			map.setTooltip("KAKAO_VIEW", content, feature[0].geom, kakaoTooltipClose);
+			map.addFeatures("KAKAO_VIEW", f);
+		});
+	}
+	
+	function kakaoTooltipClose() {
+		map.removeAllFeatures("KAKAO_VIEW");
+		map.setTooltip("KAKAO_VIEW");
+		document.getElementById("daumRoadView").className = "mapEditor";
+	}
+	
+	function setNaverRoadView() {
+		var content = document.createElement("div");
+		content.style.width = "250px";
+		content.style.height = "300px";
+		
+		map.setDrawFeatureControl("point", null, true, function(feature) {
+			var lonlat = feature[0].center;
+			map.setDrawFeatureControl("NONE");
+			nvrRoad.showRoadView(lonlat[0], lonlat[1], content);
+			var f = map.createFeature(feature[0].geom, null, null, true);
+			map.setTooltip("NAVER_VIEW", content, feature[0].geom, naverTooltipClose);
+			map.addFeatures("NAVER_VIEW", f);
+		});
+	}
+	
+	function naverTooltipClose() {
+		map.removeAllFeatures("NAVER_VIEW");
+		map.setTooltip("NAVER_VIEW");
+		document.getElementById("naverRoadView").className = "mapEditor";
+	}
+	
+	function naverView() {
+		//moveTooltip(id, geom)
+	}
+	
+	function naverMove(lonlat) {
+		//moveTooltip(id, geom)
+		map.removeAllFeatures("NAVER_VIEW");
+		var geom = "POINT(" + lonlat.lon + " " + lonlat.lat + ")";
+		var f = map.createFeature(geom, null, null, true);
+		map.moveTooltip("NAVER_VIEW", geom);
+		map.addFeatures("NAVER_VIEW", f);
+	}
+	
+	function naverError(msg) {
+		
+	}
+	
+	function kakaoView() {
+		
+	}
+	
+	function kakaoMove(lonlat) {
+		map.removeAllFeatures("KAKAO_VIEW");
+		var geom = "POINT(" + lonlat.lon + " " + lonlat.lat + ")";
+		var f = map.createFeature(geom, null, null, true);
+		map.moveTooltip("KAKAO_VIEW", geom);
+		map.addFeatures("KAKAO_VIEW", f);
+	}
+	
+	function kakaoError(msg) {
+		
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">로드뷰 표출</h2>
+	<span style="padding-left: 15px; color: #FF1100; font-weight: bold;">※ http://localhost:8080에서만 확인 가능</span>
+	<section class="mainView">
+		<div class="mapBtnArea">
+			<div class="mapBtnGroup ol-control">
+				<button id="naverRoadView" class="mapEditor" title="네이버 로드뷰">N</button>
+				<button id="daumRoadView" class="mapEditor" title="다음 로드뷰">D</button>
+			</div>
+		</div>
+		<div id="map" class="map"></div>
+	</section>
+	<section class="mainSource">
+<pre class="line-numbers">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;로드뷰 표출&lt;/title&gt;
+&lt;script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4ad681d4261b2a819c3a4c276e2d5011"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=rEkjmLvdXMpf5ECJk3dX&submodules=panorama,geocoder"&gt;&lt;/script&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;style type="text/css"&gt;
+	.ol-zoom {
+		top : .5em;
+	}
+	
+	SECTION.mainView .mapBtnArea .mapBtnGroup {
+	    top: 5.5em;
+	}
+&lt;/style&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	var nvrRoad = null;
+	var kkoRoad = null;
+	window.onload = function() {
+		map = new JBMap({
+			isRotate : true,
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+		
+
+		var roadViewStyle = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(147, 226, 230, 0.4)'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#274894',
+				width : 2
+			}),
+			image : new ol.style.Icon({
+				anchor : [20, 30],
+				anchorXUnits : 'pixels',
+				anchorYUnits : 'pixels',
+				src : "../../images/icon/roadview.png"
+			})
+		});
+		
+		nvrRoad = new RoadView({
+			map : map,
+			type : "Naver",
+			view : naverView,
+			move : naverMove,
+			error : naverError
+		});
+		map.setVectorLayer("NAVER_VIEW", null, null, roadViewStyle);
+		
+		kkoRoad = new RoadView({
+			map : map,
+			type : "Daum",
+			view : kakaoView,
+			move : kakaoMove,
+			error : kakaoError
+		});
+		map.setVectorLayer("KAKAO_VIEW", null, null, roadViewStyle);
+		
+		
+		document.getElementById("naverRoadView").onclick = function() {
+			var bool = this.className.indexOf("on") == -1;
+			
+			var daumBtn = document.getElementById("daumRoadView");
+			if(daumBtn.className.indexOf("on") != -1) {
+				daumBtn.click();
+			}
+			
+			if(bool) {
+				this.className = "mapEditor on";
+				setNaverRoadView();
+			}else{
+				this.className = "mapEditor";
+				naverTooltipClose();
+			}
+		};
+
+		document.getElementById("daumRoadView").onclick = function() {
+			var bool = this.className.indexOf("on") == -1;
+
+			var naverBtn = document.getElementById("naverRoadView");
+			if(naverBtn.className.indexOf("on") != -1) {
+				naverBtn.click();
+			}
+			
+			if(bool) {
+				this.className = "mapEditor on";
+				setKakaoRoadView();
+			}else{
+				this.className = "mapEditor";
+				kakaoTooltipClose();
+			}
+		};
+	}
+	
+	function setKakaoRoadView() {
+		var content = document.createElement("div");
+		content.style.width = "250px";
+		content.style.height = "300px";
+		
+		map.setDrawFeatureControl("point", null, true, function(feature) {
+			var lonlat = feature[0].center;
+			map.setDrawFeatureControl("NONE");
+			kkoRoad.showRoadView(lonlat[0], lonlat[1], content);
+			var f = map.createFeature(feature[0].geom, null, null, true);
+			map.setTooltip("KAKAO_VIEW", content, feature[0].geom, kakaoTooltipClose);
+			map.addFeatures("KAKAO_VIEW", f);
+		});
+	}
+	
+	function kakaoTooltipClose() {
+		map.removeAllFeatures("KAKAO_VIEW");
+		map.setTooltip("KAKAO_VIEW");
+		document.getElementById("daumRoadView").className = "mapEditor";
+	}
+	
+	function setNaverRoadView() {
+		var content = document.createElement("div");
+		content.style.width = "250px";
+		content.style.height = "300px";
+		
+		map.setDrawFeatureControl("point", null, true, function(feature) {
+			var lonlat = feature[0].center;
+			map.setDrawFeatureControl("NONE");
+			nvrRoad.showRoadView(lonlat[0], lonlat[1], content);
+			var f = map.createFeature(feature[0].geom, null, null, true);
+			map.setTooltip("NAVER_VIEW", content, feature[0].geom, naverTooltipClose);
+			map.addFeatures("NAVER_VIEW", f);
+		});
+	}
+	
+	function naverTooltipClose() {
+		map.removeAllFeatures("NAVER_VIEW");
+		map.setTooltip("NAVER_VIEW");
+		document.getElementById("naverRoadView").className = "mapEditor";
+	}
+	
+	function naverView() {
+
+	}
+	
+	function naverMove(lonlat) {
+		map.removeAllFeatures("NAVER_VIEW");
+		var geom = "POINT(" + lonlat.lon + " " + lonlat.lat + ")";
+		var f = map.createFeature(geom, null, null, true);
+		map.moveTooltip("NAVER_VIEW", geom);
+		map.addFeatures("NAVER_VIEW", f);
+	}
+	
+	function naverError(msg) {
+		
+	}
+	
+	function kakaoView() {
+		
+	}
+	
+	function kakaoMove(lonlat) {
+		map.removeAllFeatures("KAKAO_VIEW");
+		var geom = "POINT(" + lonlat.lon + " " + lonlat.lat + ")";
+		var f = map.createFeature(geom, null, null, true);
+		map.moveTooltip("KAKAO_VIEW", geom);
+		map.addFeatures("KAKAO_VIEW", f);
+	}
+	
+	function kakaoError(msg) {
+		
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;로드뷰 표출&lt;/h2&gt;
+	&lt;span style="padding-left: 15px; color: #FF1100; font-weight: bold;"&gt;※ http://localhost:8080에서만 확인 가능&lt;/span&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div class="mapBtnArea"&gt;
+			&lt;div class="mapBtnGroup ol-control"&gt;
+				&lt;button id="naverRoadView" class="mapEditor" title="네이버 로드뷰"&gt;N&lt;/button&gt;
+				&lt;button id="daumRoadView" class="mapEditor" title="다음 로드뷰"&gt;D&lt;/button&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id="map" class="map"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

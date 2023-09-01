@@ -1,0 +1,34 @@
+@charset "UTF-8";
+
+.btn {
+	vertical-align: baseline;
+	border-radius: 0;
+    margin: 4px;
+}
+
+.fileRmBtn {
+	padding: 0;
+    width: 21px;
+    font-size: 14px;
+    background-color: white;
+    border: 1px solid #ccc;
+    color: lightslategray;
+    font-weight: bold;
+    border-radius: unset;
+    float: none;
+}
+
+.longBtn {
+    font-weight: bold;
+    font-size: large;
+    float: right;
+    padding: 3px 30px;
+}
+
+#registerBtn {
+	float: right;
+}
+
+.pageBtn A {
+	cursor: pointer;
+}

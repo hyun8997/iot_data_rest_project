@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JBMap 선언하기(다른 API 연계)</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=rEkjmLvdXMpf5ECJk3dX&submodules=panorama,geocoder"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<script type="text/javascript">
+	var map = null;
+	var naverMap = null;
+	window.onload = function() {
+		naverMap = new naver.maps.Map("naverMap", {
+			center: new naver.maps.LatLng(37.527253858137236, 126.87760185189359),
+		    zoom: 8
+		});
+		
+		var mapOption = {
+				mapDiv : "masterMap",
+				minZoom : 1,
+				maxZoom : 14,
+				zoom : 8,
+				isLongZoomControl : false,
+				isWorldView : true,
+				isScaleLine : true,
+				extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+				isGeoDesic : true,
+				center : [126.87760185189359, 37.527253858137236],
+				resolutions : [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25],
+				projection : "EPSG:5179",
+				displayProjection : "EPSG:4326",
+				isRotate : false
+		}
+		
+		map = new JBMap(mapOption);
+
+		map.setEvent("move", "mapMove", function(center) {
+			naverMap.setCenter(new naver.maps.LatLng(center[1], center[0]));
+		});
+		
+		map.setEvent("zoomend", "mapMove", function(zoom) {
+			naverMap.setZoom(zoom);
+		});
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">지도 선언하기(다른 API 연계)</h2>
+	<span style="padding-left: 15px; color: #FF1100; font-weight: bold;">※ http://localhost:8080에서만 확인 가능</span>
+	<section class="mainView">
+		<div id="naverMap" class="map" style="z-index: 0;"></div>
+		<div id="masterMap" class="map" style="z-index: 1;"></div>
+	</section>
+	<section class="mainSource">
+<pre class="line-numbers" escape="true">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;JBMap 선언하기(다른 API 연계)&lt;/title&gt;
+&lt;script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=rEkjmLvdXMpf5ECJk3dX&submodules=panorama,geocoder"&gt;&lt;/script&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	var naverMap = null;
+	window.onload = function() {
+		naverMap = new naver.maps.Map("naverMap", {
+			center: new naver.maps.LatLng(37.527253858137236, 126.87760185189359),
+		    zoom: 8
+		});
+		
+		var mapOption = {
+				mapDiv : "masterMap",
+				minZoom : 1,
+				maxZoom : 14,
+				zoom : 8,
+				isLongZoomControl : false,
+				isWorldView : true,
+				isScaleLine : true,
+				extent : [124.090576171875, 32.944148888141484, 131.98974609375, 38.556757147352215],
+				isGeoDesic : true,
+				center : [126.87760185189359, 37.527253858137236],
+				resolutions : [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25],
+				projection : "EPSG:5179",
+				displayProjection : "EPSG:4326",
+				isRotate : false
+		}
+		
+		map = new JBMap(mapOption);
+
+		map.setEvent("move", "mapMove", function(center) {
+			naverMap.setCenter(new naver.maps.LatLng(center[1], center[0]));
+		});
+		
+		map.setEvent("zoomend", "mapMove", function(zoom) {
+			naverMap.setZoom(zoom);
+		});
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;지도 선언하기(다른 API 연계)&lt;/h2&gt;
+	&lt;span style="padding-left: 15px; color: #FF1100; font-weight: bold;"&gt;※ http://localhost:8080에서만 확인 가능&lt;/span&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="naverMap" class="map" style="z-index: 0;"&gt;&lt;/div&gt;
+		&lt;div id="masterMap" class="map" style="z-index: 1;"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>

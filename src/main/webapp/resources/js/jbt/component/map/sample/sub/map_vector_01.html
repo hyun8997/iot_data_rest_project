@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Feature 그리기</title>
+<link href="../../lib/prism/prism.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../lib/prism/prism.js"></script>
+<script src="../../lib/prism/clipboard.js"></script>
+<link href="../css/sub.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="../../JBMap.js" charset="utf-8"></script>
+<style type="text/css">
+	.ol-zoom {
+		top : .5em;
+	}
+</style>
+<script type="text/javascript">
+	var map = null;
+	var featureIdx = 0;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+
+		var roadViewStyle = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(147, 226, 230, 0.4)'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#274894',
+				width : 2
+			}),
+			image : new ol.style.Icon({
+				anchor : [20, 40],
+				size : [40,40],
+				anchorXUnits : 'pixels',
+				anchorYUnits : 'pixels',
+				src : "../../images/icon/roadview.png"
+			})
+		});
+		//TODO 사용할 레이어 등록
+		map.setVectorLayer("TEST", null, null, function(feature, resolution, type) {
+			console.log(type);
+			return roadViewStyle;
+		});
+		
+		//TODO 레이어에 Feature 등록
+		document.getElementById("addFeature").onclick = addFeatureByRandom;
+		
+		//TODO 레이어 내의 Feature 전체 삭제
+		document.getElementById("removeAllFeature").onclick = function() {
+			map.removeAllFeatures("TEST");
+		};
+	}
+	
+	function addFeatureByRandom() {
+		var ranLon = Math.random()*2 + 126;
+		var ranLat = Math.random()*2 + 36;
+		var point = "POINT(" + ranLon + " " + ranLat + ")";
+		var attr = {
+				id : featureIdx,
+				name : "Feature_" + featureIdx++
+		}
+		
+		var feature = map.createFeature(point, attr, null, true);
+		
+		map.addFeatures("TEST", [feature]);
+	}
+</script>
+</head>
+<body>
+	<h2 class="title">Feature 그리기</h2>
+	<section class="mainView">
+		<div id="map" class="map"></div>
+	</section>
+	<div>
+		<button id="addFeature">Feature 추가</button>
+		<button id="removeAllFeature">Feature 전체 삭제</button>
+	</div>
+	<section class="mainSource">
+<pre class="line-numbers">
+<code class="language-markup">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Feature 그리기&lt;/title&gt;
+&lt;link href="../css/sub.css" rel="stylesheet" type="text/css" &gt;
+&lt;script type="text/javascript" src="../../JBMap.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;style type="text/css"&gt;
+	.ol-zoom {
+		top : .5em;
+	}
+&lt;/style&gt;
+&lt;script type="text/javascript"&gt;
+	var map = null;
+	var featureIdx = 0;
+	window.onload = function() {
+		map = new JBMap({
+			baseLayers : {
+				"BASE" : {
+					layer : [
+					    new ol.layer.Tile({
+							source : new ol.source.OSM()
+						})
+					]
+				}
+			}
+		});
+
+		var roadViewStyle = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(147, 226, 230, 0.4)'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#274894',
+				width : 2
+			}),
+			image : new ol.style.Icon({
+				anchor : [20, 40],
+				size : [40,40],
+				anchorXUnits : 'pixels',
+				anchorYUnits : 'pixels',
+				src : "../../images/icon/roadview.png"
+			})
+		});
+		//TODO 사용할 레이어 등록
+		map.setVectorLayer("TEST", null, null, function(feature, resolution, type) {
+			console.log(type);
+			return roadViewStyle;
+		});
+		
+		//TODO 레이어에 Feature 등록
+		document.getElementById("addFeature").onclick = addFeatureByRandom;
+		
+		//TODO 레이어 내의 Feature 전체 삭제
+		document.getElementById("removeAllFeature").onclick = function() {
+			map.removeAllFeatures("TEST");
+		};
+	}
+	
+	function addFeatureByRandom() {
+		var ranLon = Math.random()*2 + 126;
+		var ranLat = Math.random()*2 + 36;
+		var point = "POINT(" + ranLon + " " + ranLat + ")";
+		var attr = {
+				id : featureIdx,
+				name : "Feature_" + featureIdx++
+		}
+		
+		var feature = map.createFeature(point, attr, null, true);
+		
+		map.addFeatures("TEST", [feature]);
+	}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2 class="title"&gt;Feature 그리기&lt;/h2&gt;
+	&lt;section class="mainView"&gt;
+		&lt;div id="map" class="map"&gt;&lt;/div&gt;
+	&lt;/section&gt;
+	&lt;div&gt;
+		&lt;button id="addFeature"&gt;Feature 추가&lt;/button&gt;
+		&lt;button id="removeAllFeature"&gt;Feature 전체 삭제&lt;/button&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+	</section>
+	<script type="text/javascript">
+	Prism.plugins.toolbar.registerButton('copy-to-clipboard', function (env) {
+		var linkCopy = document.createElement('a');
+		linkCopy.textContent = 'Copy';
+
+		if (!ClipboardJS) {
+			callbacks.push(registerClipboard);
+		} else {
+			registerClipboard();
+		}
+
+		return linkCopy;
+
+		function registerClipboard() {
+			var clip = new ClipboardJS(linkCopy, {
+				'text': function () {
+					return env.code;
+				}
+			});
+
+			clip.on('success', function() {
+				linkCopy.textContent = 'Copied!';
+
+				resetText();
+			});
+			clip.on('error', function () {
+				linkCopy.textContent = 'Press Ctrl+C to copy';
+
+				resetText();
+			});
+		}
+
+		function resetText() {
+			setTimeout(function () {
+				linkCopy.textContent = 'Copy';
+			}, 5000);
+		}
+	});
+	</script>
+</body>
+</html>
